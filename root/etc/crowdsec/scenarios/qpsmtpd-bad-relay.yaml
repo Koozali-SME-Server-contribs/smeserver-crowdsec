@@ -1,0 +1,13 @@
+type: leaky
+name: koozali/qpsmtpd-bad-relay
+description: "Seuil standard pour les blocages de relais SMTP et earlytalkers"
+# Changement important : smtp_status en minuscules 'deny'
+filter: "evt.Meta.service == 'smtp' && evt.Meta.smtp_status == 'deny' && (evt.Meta.qpsmtpd_plugin == 'check_goodrcptto' || evt.Meta.qpsmtpd_plugin == 'earlytalker')"
+leakspeed: 15s
+capacity: 4
+groupby: "evt.Meta.source_ip"
+blackhole: 5m
+labels:
+  remediation: ban
+  duration: 4h
+

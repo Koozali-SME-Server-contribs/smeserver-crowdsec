@@ -1,0 +1,11 @@
+type: leaky
+name: koozali/qpsmtpd-strict-commands
+description: "Strict threshold for invalid/unrecognized SMTP command exploitation"
+filter: "evt.Meta.service == 'smtp' && evt.Meta.smtp_status == 'deny' && evt.Meta.qpsmtpd_plugin == 'count_unrecognized_commands'"
+leakspeed: 5s
+capacity: 2
+groupby: "evt.Meta.source_ip"
+blackhole: 15m
+labels:
+  remediation: ban
+  duration: 24h

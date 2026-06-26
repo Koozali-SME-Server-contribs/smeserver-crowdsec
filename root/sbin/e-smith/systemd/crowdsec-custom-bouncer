@@ -1,0 +1,4 @@
+#!/bin/bash
+export crowd_port=$(/sbin/e-smith/config getprop crowdsec TCPPort || echo "8787")
+yq -i '.api_url = "http://127.0.0.1:" + env(crowd_port)' /etc/crowdsec/bouncers/crowdsec-custom-bouncer.yaml
+

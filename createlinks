@@ -13,6 +13,8 @@ $event = 'smeserver-crowdsec-update';
 
 foreach my $file (qw(
         /etc/systemd/system-preset/49-koozali.preset
+        /etc/crowdsec/config.yaml
+       /etc/crowdsec/parsers/s02-enrich/whitelists.yaml
 ))
 {
     templates2events( $file, $event );
@@ -22,7 +24,8 @@ event_link('systemd-default', $event, '10');
 event_link('systemd-reload', $event, '50');
 
 #services we might need to restart
-#event_services($event, 'xxxx' => 'restart', 'yyyy' => 'restart');
+event_services($event, 'crowdsec' => 'restart', 'crowdsec-blocklist-mirror.service' => 'restart', 'crowdsec-firewall-bouncer' => 'restart');
+# TODO crowdsec-custom-bouncer.service
 
 #Backup contrib files
 # backup_includes("smeserver-crowdsec", qw(
@@ -30,8 +33,6 @@ event_link('systemd-reload', $event, '50');
 #));
 
 #Other possible entries:
-#Server manager entry
-#panel_link("smeserver-crowdsec", 'manager');
 #Events to smeserver-crowdsec
 #$event = 'smeserver-crowdsec-smeserver-crowdsec';
 # safe_symlink("restart", "root/etc/e-smith/events/$event/services2adjust/smeserver-crowdsec");

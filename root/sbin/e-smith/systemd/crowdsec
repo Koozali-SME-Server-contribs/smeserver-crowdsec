@@ -1,0 +1,22 @@
+#!/bin/bash
+export crowd_port=$(/sbin/e-smith/config getprop crowdsec TCPPort || echo "8787")
+yq -i '.url = "http://127.0.0.1:" + env(crowd_port)' /etc/crowdsec/local_api_credentials.yaml
+
+
+# Chemin du fichier Dovecot
+dovecot_file="/etc/crowdsec/acquis.d/setup.dovecot.yaml"
+log_path='/var/log/dovecot/dovecot.log'
+# fix dovecot acquisition to check the right files
+if [ -f "$dovecot_file" ]; then
+    if ! grep -qF "$log_path" "$dovecot_file"; then
+        export LOG_PATH="$log_path"
+        yq -i '.filenames += env(LOG_PATH)' "$dovecot_file"
+    fi
+fi
+
+# patch roundcube
+cscli appsec-rules install crowdsecurity/vpatch-CVE-2025-49113
+
+# enable proftpd
+cscli collection install crowdsecurity/proftpd
+exit 0

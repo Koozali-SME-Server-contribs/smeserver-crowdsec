@@ -1,0 +1,3 @@
+plugin_config:
+  user: nobody # plugin process would be ran on behalf of this user
+  group: nobody # plugin process would be ran on behalf of this group

@@ -1,0 +1,5 @@
+filenames:
+  - /var/log/proftpd/proftpd.log
+labels:
+  type: proftpd
+source: file

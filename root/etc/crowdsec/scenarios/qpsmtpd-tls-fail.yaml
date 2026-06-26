@@ -1,0 +1,11 @@
+type: leaky
+name: koozali/qpsmtpd-tls-lenient
+description: "Relaxed threshold for TLS negotiation failures"
+filter: "evt.Meta.service == 'smtp' && evt.Meta.smtp_status == 'deny' && evt.Meta.qpsmtpd_plugin == 'tls'"
+leakspeed: 30s
+capacity: 10
+groupby: "evt.Meta.source_ip"
+blackhole: 10m
+labels:
+  remediation: ban
+  duration: 1h

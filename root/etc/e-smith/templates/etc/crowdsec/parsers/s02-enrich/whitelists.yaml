@@ -1,0 +1,84 @@
+name: crowdsecurity/whitelists
+description: "Whitelist events from private ipv4 addresses"
+whitelist:
+  reason: "private ipv4/ipv6 ip/ranges"
+  ip:
+    - "127.0.0.1"
+    - "::1"
+    - "{$LocalIP}"
+  cidr:{
+use esmith::NetworksDB;
+my $n = esmith::NetworksDB->open_ro() ||
+  die "Couldn't open networks DB\n";
+my @entries;
+
+$OUT="\n";
+
+$OUT.= '    - "127.0.0.0/8"
+    - "192.168.0.0/16"
+    - "10.0.0.0/8"
+    - "172.16.0.0/12"
+' unless ( $crowdsec{FilterAnyLANIP}|| "disabled") eq "enabled";
+
+sub parse_to_cidr {
+    my ($entry) = @_;
+    $entry =~ s/^\s+|\s+$//g; # whitespace cleanup
+    
+    # has a slash '/'
+    if ($entry =~ m{^([^/]+)/(.+)$}) {
+        my $ip = $1;
+        my $mask = $2;
+        
+        # already bitmask 
+        if ($mask =~ /^\d+$/) {
+            return "$ip/$mask";
+        }
+        
+        # netmask (dots)
+        if ($mask =~ /\./) {
+            my @octets = split(/\./, $mask);
+            if (scalar(@octets) == 4) {
+                my $binary_str = sprintf("%08b%08b%08b%08b", @octets);
+                my ($ones) = $binary_str =~ /^(1*)/;
+                my $bitmask = length($ones);
+                return "$ip/$bitmask";
+            }
+        }
+        
+        # unknown format
+        return "$ip/32";
+    }
+    # ip alone
+    return "$entry/32";
+}
+
+# our whitelist for smanager/ server-manager
+unless (($crowdsec{FilterValidRemoteHosts} || 'disabled') eq 'enabled'){
+        push @entries ,  split(/[,;]/, ${'httpd-admin'}{'ValidFrom'});
+}
+
+# our LOCAL network DB
+unless (($crowdsec{FilterLocalNetworks} || 'disabled') eq 'enabled'){
+  foreach my $net ($n->networks){
+    my $key = $net->key;
+    my $mask = $net->prop('Mask');
+    push @entries, "$key/$mask";
+  }
+}
+
+# Add a local whitelist
+foreach (split /[,;]/, ($crowdsec{'IgnoreIP'} || '')){
+    my $addr = $_;
+    next unless (length $addr);
+    push @entries, "$addr";
+}
+
+
+
+foreach my $entry (@entries) {
+    next if $entry =~ /^\s*$/; # ignore empty lines
+    my $cidr = parse_to_cidr($entry);
+        $OUT .= "    - \"$cidr\"\n";
+}
+}  # expression:
+  #   - "'foo.com' in evt.Meta.source_ip.reverse" 

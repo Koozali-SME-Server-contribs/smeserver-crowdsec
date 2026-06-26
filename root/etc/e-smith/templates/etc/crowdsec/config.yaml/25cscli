@@ -1,0 +1,3 @@
+cscli:
+  output: human
+  color: auto

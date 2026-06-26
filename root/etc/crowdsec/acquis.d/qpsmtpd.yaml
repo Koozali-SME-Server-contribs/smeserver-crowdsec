@@ -1,0 +1,6 @@
+filenames:
+  - /var/log/qpsmtpd/qpsmtpd.log
+  - /var/log/sqpsmtpd/sqpsmtpd.log
+  - /var/log/uqpsmtpd/uqpsmtpd.log
+labels:
+  type: qpsmtpd-forkserver

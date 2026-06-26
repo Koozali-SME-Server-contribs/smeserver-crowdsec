@@ -1,0 +1,37 @@
+onsuccess: next_stage
+filter: "evt.Line.Raw contains 'logterse'"
+name: koozali/qpsmtpd-logs
+description: "Robust positional parser for qpsmtpd-forkserver logterse output"
+
+nodes:
+  - grok:
+      # Pattern 1: Capture the syslog timestamp at the very beginning of the line
+      pattern: '^%{SYSLOGTIMESTAMP:log_timestamp}'
+      expression: "evt.Line.Raw"
+  - grok:
+      # Pattern 2: Find the (status) and jump directly to the backtick marker
+      pattern: '\((?P<smtp_status>\w+)\).*?logging::logterse:\s+\`'
+      expression: "evt.Line.Raw"
+  - grok:
+      # Pattern 3: Extract IP and Hostname immediately after the backtick marker
+      pattern: '\`\s+(?P<source_ip>[0-9a-fA-F\.:]+)\s+(?P<source_host>[^\s]+)'
+      expression: "evt.Line.Raw"
+  - grok:
+      # Pattern 4: Grab the plugin name right before the 3-digit SMTP status code
+      pattern: '(?P<qpsmtpd_plugin>[^\s]+)\s+(?:901|903)\s+'
+      expression: "evt.Line.Raw"
+
+statics:
+  - meta: service
+    value: smtp
+  - meta: source_ip
+    expression: "evt.Parsed.source_ip"
+  - meta: reverse_dns
+    expression: "evt.Parsed.source_host"
+  - meta: smtp_status
+    expression: "evt.Parsed.smtp_status"
+  - meta: qpsmtpd_plugin
+    expression: "evt.Parsed.qpsmtpd_plugin"
+  # Pulls the timestamp parsed in Pass 1 to clear the time-machine warning completely
+  - target: evt.StrTime
+    expression: "evt.Parsed.log_timestamp"

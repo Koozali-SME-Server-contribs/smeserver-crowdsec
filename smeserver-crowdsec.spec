@@ -1,5 +1,5 @@
 %define name smeserver-crowdsec
-%define version 1.0
+%define version 0.9
 %define release 1
 Summary: This is what smeserver-crowdsec does.
 Name: %{name}
@@ -13,14 +13,25 @@ Prefix: %{_prefix}
 BuildArchitectures: noarch
 BuildRequires: smeserver-devtools
 Requires: smeserver-release >= 11.0
+Requires: crowdsec
+Requires: crowdsec-custom-bouncer
+Requires: crowdsec-blocklist-mirror
+Requires: crowdsec-firewall-bouncer-iptables
+# TODO switch to crowdsec-firewall-bouncer-nftables when we move away iptables
+Requires: yq
 AutoReqProv: no
 
 %description
 SME Server wrapper for crowdsec
 
 %changelog
-* Day MMMM DD YYYY <brianr@koozali.org> 1.0-1.sme
-- Initial code - create RPM [SME:99999]
+* Wed Jun 24 2026 Jean-Philippe Pialasse <jpp@koozali.org> 0.9-1.sme
+- initial SME 11 build [SME: 13626]
+- added our log path for dovecot
+- added our qpsmtpd parser, scenarios and log path
+- global templated whitelist
+- enable roundcube crowdsecurity/vpatch-CVE-2025-49113
+- ProFTP enabled
 
 %prep
 
@@ -34,6 +45,10 @@ rm -rf $RPM_BUILD_ROOT
 (cd root   ; find . -depth -print | cpio -dump $RPM_BUILD_ROOT)
 rm -f %{name}-%{version}-filelist
 /sbin/e-smith/genfilelist $RPM_BUILD_ROOT \
+  --file /sbin/e-smith/systemd/crowdsec 'attr(755,root,root)' \
+  --file /sbin/e-smith/systemd/crowdsec-blocklist-mirror 'attr(755,root,root)' \
+  --file /sbin/e-smith/systemd/crowdsec-custom-bouncer 'attr(755,root,root)' \
+  --file /sbin/e-smith/systemd/crowdsec-firewall 'attr(755,root,root)' \
 > %{name}-%{version}-filelist
 #echo "%doc COPYING"  >> %{name}-%{version}-filelist
 #--dir <dir> 'attr(755,user,grp)' \

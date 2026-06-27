@@ -1,0 +1,2 @@
+mode: iptables
+update_frequency: 10s

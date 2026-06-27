@@ -1,0 +1,5 @@
+# Ignore IPs that are banned for triggering scenarios that do not contain any of the provided words, eg ["ssh", "http"]
+scenarios_containing: []
+# Ignore IPs that are banned for triggering scenarios that contain any of the provided words
+scenarios_not_containing: []
+

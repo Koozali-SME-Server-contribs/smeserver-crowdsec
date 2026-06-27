@@ -1,0 +1,4 @@
+update_frequency: 10s
+cache_retention_duration: 10s
+daemonize: true
+

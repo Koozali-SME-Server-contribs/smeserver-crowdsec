@@ -1,4 +1,31 @@
 #!/bin/bash
-export crowd_port=$(/sbin/e-smith/config getprop crowdsec TCPPort || echo "8787")
-yq -i '.api_url = "http://127.0.0.1:" + env(crowd_port)' /etc/crowdsec/bouncers/crowdsec-custom-bouncer.yaml
+expand-templates /etc/crowdsec/bouncers/crowdsec-custom-bouncer.yaml
+API=$(/sbin/e-smith/config getprop crowdsec-custom-bouncer  API || echo "NONE")
+
+if [ "$API" = "NONE" ] || [ -z "$API" ]; then
+    echo "Error: No API key defined for crowdsec-custom-bouncer"
+    exit 1
+fi
+
+# Uses JSON output for strict word matching on the bouncer name
+EXISTING_BOUNCER=$(cscli bouncers list -o json | grep -E '"name"\s*:\s*"crowdsec-custom-bouncer"' || true)
+
+if [ -z "$EXISTING_BOUNCER" ]; then
+    # Case 1: Bouncer does not exist, safe to create a new one
+    echo "Creating bouncer: crowdsec-custom-bouncer..."
+    cscli bouncers add crowdsec-custom-bouncer --key "$API"
+#else
+    # Case 2: Bouncer exists. Since CrowdSec hashes keys and cannot display them back,
+    # the best practice is to drop and recreate it to ensure the key is synchronized.
+#    echo "Bouncer crowdsec-custom-bouncer already exists. Syncing API key..."
+
+    # Remove the old instance to prevent "already exists" compilation blocks
+#    cscli bouncers delete crowdsec-custom-bouncer
+
+    # Instantly register the bouncer again with the active key
+#    cscli bouncers add crowdsec-custom-bouncer --key "$API"
+fi
+
+
+exit 0
 

@@ -1,0 +1,11 @@
+crowdsec_config:
+  lapi_key: {${'crowdsec-blocklist-mirror'}{'API'} ||"<API_KEY>"} 
+  lapi_url: http://127.0.0.1:{$crowdsec{TCPPort} || "8787"}
+  update_frequency: 10s
+  include_scenarios_containing: []
+  exclude_scenarios_containing: []
+  only_include_decisions_from: []
+  insecure_skip_verify: false
+  supported_decisions_types:
+    - ban
+

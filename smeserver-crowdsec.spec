@@ -32,6 +32,7 @@ SME Server wrapper for crowdsec
 - global templated whitelist
 - enable roundcube crowdsecurity/vpatch-CVE-2025-49113
 - ProFTP enabled
+- TODO handle creation of appi key and registration of bouncers
 
 %prep
 

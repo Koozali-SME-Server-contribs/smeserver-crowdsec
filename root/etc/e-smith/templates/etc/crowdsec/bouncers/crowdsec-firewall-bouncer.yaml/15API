@@ -1,0 +1,7 @@
+api_url: http://127.0.0.1:{$crowdsec{TCPPort} || "8787"}
+api_key: {${'crowdsec-firewall-bouncer'}{'API'} ||"<API_KEY>"}
+## TLS Authentication
+# cert_path: /etc/crowdsec/tls/cert.pem
+# key_path: /etc/crowdsec/tls/key.pem
+# ca_cert_path: /etc/crowdsec/tls/ca.crt
+insecure_skip_verify: false

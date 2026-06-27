@@ -1,0 +1,3 @@
+#to change the blacklists name
+blacklists_ipv4: crowdsec-blacklists
+blacklists_ipv6: crowdsec6-blacklists

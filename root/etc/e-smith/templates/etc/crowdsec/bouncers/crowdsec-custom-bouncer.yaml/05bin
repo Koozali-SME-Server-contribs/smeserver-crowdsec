@@ -1,0 +1,7 @@
+bin_path: ${BINARY_PATH}
+bin_args: []
+# Invokes binary once and feeds incoming decisions to its stdin.
+feed_via_stdin: false
+# Number of times to restart the binary. relevant if feed_via_stdin=true. Set to -1 for infinite retries.
+total_retries: 0
+

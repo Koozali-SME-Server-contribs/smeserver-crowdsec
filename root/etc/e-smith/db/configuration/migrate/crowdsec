@@ -1,0 +1,50 @@
+{
+use Digest::SHA;
+
+sub gen_api_key {
+    # get random
+    open(my $urandom, '<:raw', '/dev/urandom') or die "Erreur /dev/urandom: $!";
+    my $raw_bytes;
+    sysread($urandom, $raw_bytes, 32);
+    close($urandom);
+
+    # Hash SHA-256 (64 characters)
+    my $sha256_hex = Digest::SHA::sha256_hex($raw_bytes);
+
+    # Get first 32 
+    # CrowdSec accepts 32 letters and digits.
+    my $api_key = substr($sha256_hex, 0, 32);
+    
+    return $api_key;
+}
+
+    # ---! crowdsec-firewall-bouncer
+    my $rec = $DB->get('crowdsec-firewall-bouncer')
+        || $DB->new_record('crowdsec-firewall-bouncer', {type => 'service'});
+    my $pw = $rec->prop('API');
+    if (not $pw or length($pw) != 32){
+        my $pw = gen_api_key();
+        $rec->set_prop('API', $pw);
+    }
+
+    # ---! crowdsec-custom-bouncer
+    $rec = $DB->get('crowdsec-custom-bouncer')
+        || $DB->new_record('crowdsec-custom-bouncer', {type => 'service'});
+    my $pw = $rec->prop('API');
+    if (not $pw or length($pw) != 32){
+        my $pw = gen_api_key();
+        $rec->set_prop('API', $pw);
+    }
+
+    # ---! crowdsec-blocklist-mirror
+    $rec = $DB->get('crowdsec-blocklist-mirror')
+        || $DB->new_record('crowdsec-blocklist-mirror', {type => 'service'});
+    my $pw = $rec->prop('API');
+    if (not $pw or length($pw) != 32){
+        my $pw = gen_api_key();
+        $rec->set_prop('API', $pw);
+    }
+
+
+
+}

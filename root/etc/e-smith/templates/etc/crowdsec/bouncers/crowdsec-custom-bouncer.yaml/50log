@@ -1,0 +1,8 @@
+log_mode: file
+log_dir: /var/log/
+log_level: info
+log_compression: true
+log_max_size: 100
+log_max_backups: 3
+log_max_age: 30
+

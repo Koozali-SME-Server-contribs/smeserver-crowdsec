@@ -1,0 +1,3 @@
+api_url: http://localhost:{$crowdsec{TCPPort} || "8787"}/
+api_key: {${'crowdsec-custom-bouncer'}{'API'} ||"<API_KEY>"}
+

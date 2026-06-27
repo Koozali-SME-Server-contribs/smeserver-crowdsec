@@ -1,4 +1,30 @@
 #!/bin/bash
-export crowd_port=$(/sbin/e-smith/config getprop crowdsec TCPPort || echo "8787")
-yq -i '.crowdsec_config.lapi_url = "http://127.0.0.1:" + env(crowd_port)' /etc/crowdsec/bouncers/crowdsec-blocklist-mirror.yaml
+expand-templates /etc/crowdsec/bouncers/crowdsec-blocklist-mirror.yaml
+API=$(/sbin/e-smith/config getprop crowdsec-blocklist-mirror  API || echo "NONE")
 
+if [ "$API" = "NONE" ] || [ -z "$API" ]; then
+    echo "Error: No API key defined for crowdsec-blocklist-mirror"
+    exit 1
+fi
+
+# Uses JSON output for strict word matching on the bouncer name
+EXISTING_BOUNCER=$(cscli bouncers list -o json | grep -E '"name"\s*:\s*"crowdsec-blocklist-mirror"' || true)
+
+if [ -z "$EXISTING_BOUNCER" ]; then
+    # Case 1: Bouncer does not exist, safe to create a new one
+    echo "Creating bouncer: crowdsec-blocklist-mirror..."
+    cscli bouncers add crowdsec-blocklist-mirror --key "$API"
+#else
+    # Case 2: Bouncer exists. Since CrowdSec hashes keys and cannot display them back,
+    # the best practice is to drop and recreate it to ensure the key is synchronized.
+#    echo "Bouncer crowdsec-blocklist-mirror already exists. Syncing API key..."
+
+    # Remove the old instance to prevent "already exists" compilation blocks
+#    cscli bouncers delete crowdsec-blocklist-mirror
+
+    # Instantly register the bouncer again with the active key
+#    cscli bouncers add crowdsec-blocklist-mirror --key "$API"
+fi
+
+
+exit 0

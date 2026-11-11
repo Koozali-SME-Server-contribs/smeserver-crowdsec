@@ -1,6 +1,6 @@
 %define name smeserver-crowdsec
 %define version 0.9
-%define release 1
+%define release 2
 Summary: This is what smeserver-crowdsec does.
 Name: %{name}
 Version: %{version}
@@ -25,6 +25,9 @@ AutoReqProv: no
 SME Server wrapper for crowdsec
 
 %changelog
+* Wed Nov 11 2026 Jean-Philippe Pialasse <jpp@koozali.org> 0.9-2.sme
+- fix ExecStartPre code
+
 * Wed Jun 24 2026 Jean-Philippe Pialasse <jpp@koozali.org> 0.9-1.sme
 - initial SME 11 build [SME: 13626]
 - added our log path for dovecot
@@ -32,7 +35,7 @@ SME Server wrapper for crowdsec
 - global templated whitelist
 - enable roundcube crowdsecurity/vpatch-CVE-2025-49113
 - ProFTP enabled
-- TODO handle creation of appi key and registration of bouncers
+- handle creation of api key and registration of 3 basic bouncers
 
 %prep
 

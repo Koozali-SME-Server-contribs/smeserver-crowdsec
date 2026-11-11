@@ -1,5 +1,5 @@
 #!/bin/bash
-expand-templates /etc/crowdsec/bouncers/crowdsec-blocklist-mirror.yaml
+/sbin/e-smith/expand-template /etc/crowdsec/bouncers/crowdsec-blocklist-mirror.yaml
 API=$(/sbin/e-smith/config getprop crowdsec-blocklist-mirror  API || echo "NONE")
 
 if [ "$API" = "NONE" ] || [ -z "$API" ]; then

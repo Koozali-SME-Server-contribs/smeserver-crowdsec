@@ -1,5 +1,5 @@
 #!/bin/bash
-expand-templates /etc/crowdsec/bouncers/crowdsec-custom-bouncer.yaml
+/sbin/e-smith/expand-template /etc/crowdsec/bouncers/crowdsec-custom-bouncer.yaml
 API=$(/sbin/e-smith/config getprop crowdsec-custom-bouncer  API || echo "NONE")
 
 if [ "$API" = "NONE" ] || [ -z "$API" ]; then

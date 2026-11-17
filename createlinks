@@ -28,7 +28,7 @@ event_link('systemd-reload', $event, '50');
 
 #services we might need to restart
 event_services($event, 'crowdsec' => 'restart', 
-	               'crowdsec-blocklist-mirror.service' => 'restart', 
+	               'crowdsec-blocklist-mirror' => 'restart', 
 		       'crowdsec-firewall-bouncer' => 'restart',
                        'rsyslog' => 'restart'
 	       );

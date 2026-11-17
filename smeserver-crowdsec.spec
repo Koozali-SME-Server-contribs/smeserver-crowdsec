@@ -1,6 +1,6 @@
 %define name smeserver-crowdsec
 %define version 0.9
-%define release 2
+%define release 3
 Summary: This is what smeserver-crowdsec does.
 Name: %{name}
 Version: %{version}
@@ -25,6 +25,9 @@ AutoReqProv: no
 SME Server wrapper for crowdsec
 
 %changelog
+* Mon Nov 16 2026 Jean-Philippe Pialasse <jpp@koozali.org> 0.9-3.sme
+- fix service name type  for crowdsec-blocklist-mirror
+
 * Wed Nov 11 2026 Jean-Philippe Pialasse <jpp@koozali.org> 0.9-2.sme
 - fix ExecStartPre code
 

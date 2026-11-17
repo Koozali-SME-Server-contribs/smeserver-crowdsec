@@ -1,0 +1,7 @@
+filenames:
+  - /var/log/openvpn-s2s/*.log
+  - /var/log/openvpn-routed/*.log
+  - /var/log/openvpn-bridge/*.log
+labels:
+  type: openvpn
+source: file

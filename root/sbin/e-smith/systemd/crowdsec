@@ -17,6 +17,12 @@ fi
 # patch roundcube
 cscli appsec-rules install crowdsecurity/vpatch-CVE-2025-49113
 
+# openvpn
+cscli collections install pserranoa/openvpn
+
+# wireguard
+cscli collections install crowdsecurity/wireguard
+
 # enable proftpd
 cscli collection install crowdsecurity/proftpd
 exit 0

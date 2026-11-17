@@ -1,0 +1,5 @@
+filenames:
+  - /var/log/httpd/*_log
+labels:
+  type: apache2
+source: file

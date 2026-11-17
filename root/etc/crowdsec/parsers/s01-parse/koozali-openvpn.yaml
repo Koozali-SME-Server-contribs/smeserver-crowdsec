@@ -1,0 +1,45 @@
+filter: "evt.Line.Labels.type == 'openvpn' || evt.Parsed.program in ['openvpn', 'ovpn-server']"
+onsuccess: next_stage
+name: koozali/openvpn-logs
+description: "Parse OpenVPN standard timestamps on Koozali SME Server"
+pattern_syntax:
+    OPENVPN_SME_DATE: "%{DAY} %{MONTH} %{MONTHDAY} %{TIME} %{YEAR}"
+    OPENVPN_TLS_AUTH_ERROR: "%{OPENVPN_SME_DATE:timestamp} (?:%{WORD:client}/|)%{IPV4:source_ip}:%{INT:sport} TLS Auth Error:.*"
+    OPENVPN_AUTH_FAILED: "%{OPENVPN_SME_DATE:timestamp} (?:%{WORD:client}/|)%{IPV4:source_ip}:%{INT:sport} AUTH: Received control message: AUTH_FAILED"
+    OPENVPN_AUTH_VERIFY_ERROR: "%{OPENVPN_SME_DATE:timestamp} (?:%{WORD:client}/|)%{IPV4:source_ip}:%{INT:source_port} VERIFY ERROR:.*"
+    OPENVPN_TLS_CRYPT: "%{OPENVPN_SME_DATE:timestamp} (?:%{WORD:client}/|)%{IPV4:source_ip}:%{INT:sport} TLS Error: tls-crypt unwrapping failed from.*"
+    OPENVPN_TLS_PACKET: "%{OPENVPN_SME_DATE:timestamp} (?:%{WORD:client}/|)%{IPV4:source_ip}:%{INT:sport} TLS Error: incoming packet authentication failed from.*"
+    OPENVPN_TLS_HANDSHAKE: "%{OPENVPN_SME_DATE:timestamp} (?:%{WORD:client}/|)%{IPV4:source_ip}:%{INT:sport} TLS Error: TLS handshake failed from.*"
+    OPENVPN_TLS_CERT: "%{OPENVPN_SME_DATE:timestamp} (?:%{WORD:client}/|)%{IPV4:source_ip}:%{INT:source_port} OpenSSL: error:%{WORD}:.*verify failed"
+nodes:
+  - grok:
+      name: "OPENVPN_TLS_AUTH_ERROR"
+      apply_on: message
+  - grok:
+      name: "OPENVPN_AUTH_FAILED"
+      apply_on: message
+  - grok:
+      name: "OPENVPN_AUTH_VERIFY_ERROR"
+      apply_on: message
+  - grok:
+      name: "OPENVPN_TLS_CRYPT"
+      apply_on: message
+  - grok:
+      name: "OPENVPN_TLS_PACKET"
+      apply_on: message
+  - grok:
+      name: "OPENVPN_TLS_HANDSHAKE"
+      apply_on: message
+  - grok:
+      name: "OPENVPN_TLS_CERT"
+      apply_on: message
+statics:
+  - meta: service
+    value: openvpn
+  - meta: source_ip
+    expression: "evt.Parsed.source_ip"
+  - meta: log_type
+    value: auth_failed
+  - target: evt.StrTime
+    expression: "evt.Parsed.timestamp"
+

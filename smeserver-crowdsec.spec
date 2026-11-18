@@ -1,6 +1,6 @@
 %define name smeserver-crowdsec
 %define version 0.9
-%define release 5
+%define release 6
 Summary: This is what smeserver-crowdsec does.
 Name: %{name}
 Version: %{version}
@@ -25,6 +25,9 @@ AutoReqProv: no
 SME Server wrapper for crowdsec
 
 %changelog
+* Wed Nov 18 2026 Jean-Philippe Pialasse <jpp@koozali.org> 0.9-6.sme
+- prevent custom bouncer from starting if not enabled
+
 * Tue Nov 17 2026 Jean-Philippe Pialasse <jpp@koozali.org> 0.9-5.sme
 - parse sshd/sshd.log
 

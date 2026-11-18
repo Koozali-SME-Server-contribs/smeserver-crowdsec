@@ -30,9 +30,9 @@ event_link('systemd-reload', $event, '50');
 event_services($event, 'crowdsec' => 'restart', 
 	               'crowdsec-blocklist-mirror' => 'restart', 
 		       'crowdsec-firewall-bouncer' => 'restart',
+		       'crowdsec-firewall-custom' => 'restart',
                        'rsyslog' => 'restart'
 	       );
-# TODO crowdsec-custom-bouncer.service
 
 #Backup contrib files
  backup_includes("smeserver-crowdsec", qw(

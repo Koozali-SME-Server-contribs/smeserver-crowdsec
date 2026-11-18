@@ -1,0 +1,4 @@
+filenames:
+  - /var/log/sshd/sshd.log
+labels:
+  type: syslog
